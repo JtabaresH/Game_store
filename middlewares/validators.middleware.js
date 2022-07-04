@@ -34,4 +34,4 @@ const createUserValidators = [
 	checkResult,
 ]; */
 
-module.exports = { createUserValidators, createTaskValidators };
+module.exports = { createUserValidators };

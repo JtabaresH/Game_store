@@ -1,6 +1,5 @@
 const express = require('express')
 
-
 // Controllers
 const { createUser, loginUser, getAllActiveUsers, updateUser, disableUser } = require('../controllers/users.controller')
 const { userExists } = require('../middlewares/users.middleware')

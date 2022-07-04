@@ -21,8 +21,8 @@ app.use(express.json())
 
 // Define endpoints
 app.use('/api/v1/users', usersRouter)
-app.use('/api/v1/games', gamesRouter)
-app.use('/api/v1/consoles', consolesRouter)
+/* app.use('/api/v1/games', gamesRouter)
+app.use('/api/v1/consoles', consolesRouter) */
 
 // Authenticate sync and listen server
 db.authenticate()
