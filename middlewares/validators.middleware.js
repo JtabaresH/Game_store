@@ -28,10 +28,15 @@ const createUserValidators = [
 	checkResult,
 ];
 
-/* const createTaskValidators = [
+const createGameValidators = [
 	body('title').notEmpty().withMessage('Title cannot be empty'),
-	body('userId').isNumeric().withMessage('userId must be a number'),
+	body('genre').notEmpty().withMessage('Genre cannot be empty'),
 	checkResult,
-]; */
+  ];
+  
+  const createReviewValidators = [
+	body('comment').notEmpty().withMessage('Comment cannot be empty'),
+	checkResult,
+  ];
 
-module.exports = { createUserValidators };
+module.exports = { createUserValidators, createGameValidators, createReviewValidators };

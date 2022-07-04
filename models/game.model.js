@@ -23,4 +23,4 @@ const Game = db.define('game', {
     }
 })
 
-module.export = { Game }
+module.exports = { Game }

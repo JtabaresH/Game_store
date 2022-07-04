@@ -56,7 +56,7 @@ const loginUser = catchAsync(async (req, res, next) => {
         return next(new AppError('Credentials invalid', 400));
     }
 
-    // Generate JWT (JsonWebToken) ->
+    // Generate JWT (JsonWebToken) -> require('crypto').randomBytes(64).toString('hex')
     const token = await jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
         expiresIn: '30d',
     });
@@ -69,7 +69,8 @@ const loginUser = catchAsync(async (req, res, next) => {
 })
 
 const getAllActiveUsers = catchAsync(async (req, res, next) => {
-    const users = await User.findAll({
+    
+    const users = await User.findOne({
         where: {
             status: "active"
         }
