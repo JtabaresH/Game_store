@@ -21,7 +21,7 @@ app.use(express.json())
 // Define endpoints
 app.use('/api/v1/users', usersRouter)
 app.use('/api/v1/games', gamesRouter)
-/* app.use('/api/v1/consoles', consolesRouter) */
+app.use('/api/v1/consoles', consolesRouter)
 
 // Authenticate sync and listen server
 db.authenticate()
@@ -39,6 +39,9 @@ db.authenticate()
     Game.belongsToMany(Console, { foreignKey: 'consoleId', through: 'gameInConsole' })
     // Console and GamesInConsoles Relation M --> M
     Console.belongsToMany(Game, { foreignKey: 'gameId', through: 'gameInConsole' })
+    /* // Users and Games Relation 1 --> M
+    User.hasMany(Game, { foreignKey: 'userId' })
+    Game.belongsTo(User) */
 
 
 db.sync()
