@@ -67,10 +67,22 @@ const reviewGame = catchAsync(async (req, res, next) => {
     });
 });
 
+const assignGameToConsole = catchAsync(async(req, res, next) => {
+    const { gameId, consoleId } = req.body
+
+    const gameInConsole = await GameInConsole.create({ gameId, consoleId })
+
+    res.status(201).json({
+        status: 'success',
+        gameInConsole
+    });
+})
+
 module.exports = {
     getAllGames,
     createGame,
     updateGame,
     deleteGame,
     reviewGame,
+    assignGameToConsole
 };

@@ -7,6 +7,7 @@ const {
   updateGame,
   deleteGame,
   reviewGame,
+  assignGameToConsole,
 } = require('../controllers/games.controller');
 
 const {
@@ -27,7 +28,7 @@ gamesRouter.get('/', getAllGames);
 
 gamesRouter.use(protectSession);
 
-gamesRouter.post('/', createGameValidators, createGame);
+gamesRouter.post('/', createGameValidators, createGame, assignGameToConsole);
 
 gamesRouter
   .use('/:id', gameExists)
