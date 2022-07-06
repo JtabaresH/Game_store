@@ -25,7 +25,7 @@ gamesRouter.get('/', getAllGames);
 
 gamesRouter.use(protectSession);
 
-gamesRouter.post('/', createGame);
+gamesRouter.post('/', createGameValidators, createGame);
 
 gamesRouter.post('/assignGameToConsole', assignGameToConsole);
 
