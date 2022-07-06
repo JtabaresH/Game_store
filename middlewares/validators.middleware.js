@@ -39,7 +39,6 @@ const createGameValidators = [
     .withMessage('Genre cannot be empty')
     .isString()
     .withMessage('Genre must be a string'),
-  ,
   checkResult,
 ];
 
