@@ -1,26 +1,26 @@
-const { db, DataTypes } = require('../utils/database.util')
+const { db, DataTypes } = require('../utils/database.util');
 
-//Create model
+// Create our first model (table)
 const Game = db.define('game', {
-    id: {
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-        type: DataTypes.INTEGER
-    },
-    title: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    genre: {
-        type: DataTypes.STRING,
-        allowNull: false
-    },
-    status: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        defaultValue: 'active'
-    }
-})
+  id: {
+    primaryKey: true,
+    type: DataTypes.INTEGER,
+    autoIncrement: true,
+    allowNull: false,
+  },
+  title: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  genre: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  status: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    defaultValue: 'active',
+  },
+});
 
-module.exports = { Game }
+module.exports = { Game };
