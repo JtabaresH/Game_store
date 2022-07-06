@@ -6,9 +6,11 @@ const { AppError } = require('../utils/appError.util');
 const { catchAsync } = require('../utils/catchAsync.util');
 
 const gameExists = catchAsync(async (req, res, next) => {
-  const { id } = req.params;
+  const { id, gameId } = req.params;
 
-  const game = await Game.findOne({ where: { id, status: 'active' } });
+  const game = await Game.findOne({
+    where: { id: id || gameId, status: 'active' },
+  });
 
   if (!game) {
     return next(new AppError('Game not found', 404));

@@ -14,10 +14,7 @@ const {
 
 const { consoleExists } = require('../middlewares/consoles.middleware');
 
-const {
-  protectSession,
-  protectUserAccount,
-} = require('../middlewares/auth.middleware');
+const { protectSession } = require('../middlewares/auth.middleware');
 
 const consolesRouter = express.Router();
 
@@ -30,13 +27,7 @@ consolesRouter.post('/', createConsoleValidators, createConsole);
 consolesRouter
   .use('/:id', consoleExists)
   .route('/:id')
-  .patch(
-    // protectUserAccount,
-    updateConsole
-  )
-  .delete(
-    // protectUserAccount,
-    deleteConsole
-  );
+  .patch(updateConsole)
+  .delete(deleteConsole);
 
 module.exports = { consolesRouter };

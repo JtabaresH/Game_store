@@ -2,111 +2,106 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const dotenv = require('dotenv');
 
-//Model
-const { User } = require('../models/user.model')
+// Models
+const { User } = require('../models/user.model');
 
-// Error handlers
-const { catchAsync } = require('../utils/catchAsync.util')
-const { appError } = require('../utils/appError.util')
+// Utils
+const { catchAsync } = require('../utils/catchAsync.util');
+const { AppError } = require('../utils/appError.util');
+
 dotenv.config({ path: './config.env' });
 
-// Petitions
 const createUser = catchAsync(async (req, res, next) => {
-    const { name, age, email, password } = req.body;
+  const { name, email, password } = req.body;
 
-    // Hash password
-    const salt = await bcrypt.genSalt(12);
-    const hashPassword = await bcrypt.hash(password, salt);
+  // Hash password
+  const salt = await bcrypt.genSalt(12);
+  const hashPassword = await bcrypt.hash(password, salt);
 
-    const newUser = await User.create({
-        name,
-        age,
-        email,
-        password: hashPassword,
-    });
+  const newUser = await User.create({
+    name,
+    email,
+    password: hashPassword,
+  });
 
-    // Remove password from response
-    newUser.password = undefined;
+  // Remove password from response
+  newUser.password = undefined;
 
-    res.status(201).json({
-        status: 'success',
-        newUser,
-    });
-})
+  res.status(201).json({
+    status: 'success',
+    newUser,
+  });
+});
 
-const loginUser = catchAsync(async (req, res, next) => {
-    const { email, password } = req.body;
+const login = catchAsync(async (req, res, next) => {
+  const { email, password } = req.body;
 
-    // Validate credentials (email)
-    const user = await User.findOne({
-        where: {
-            email,
-            status: 'active',
-        },
-    });
+  // Validate credentials (email)
+  const user = await User.findOne({
+    where: {
+      email,
+      status: 'active',
+    },
+  });
 
-    if (!user) {
-        return next(new AppError('Credentials invalid', 400));
-    }
+  if (!user) {
+    return next(new AppError('Credentials invalid', 400));
+  }
 
-    // Validate password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+  // Validate password
+  const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if (!isPasswordValid) {
-        return next(new AppError('Credentials invalid', 400));
-    }
+  if (!isPasswordValid) {
+    return next(new AppError('Credentials invalid', 400));
+  }
 
-    // Generate JWT (JsonWebToken) -> require('crypto').randomBytes(64).toString('hex')
-    const token = await jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
-        expiresIn: '30d',
-    });
+  // Generate JWT (JsonWebToken) ->
+  const token = await jwt.sign({ id: user.id }, process.env.JWT_SECRET, {
+    expiresIn: '30d',
+  });
 
-    // Send response
-    res.status(200).json({
-        status: 'success',
-        token,
-    });
-})
-
-const getAllActiveUsers = catchAsync(async (req, res, next) => {
-    
-    const users = await User.findOne({
-        where: {
-            status: "active"
-        }
-    })
-    res.status(201).json({
-        status: 'success',
-        users
-    })
-})
+  // Send response
+  res.status(200).json({
+    status: 'success',
+    token,
+  });
+});
 
 const updateUser = catchAsync(async (req, res, next) => {
-    const { id } = req.params
-    const { name, email } = req.body
+  const { user } = req;
+  const { name, email } = req.body;
 
-    const user = await User.findOne({ where: { id } })
+  await user.update({ name, email });
 
-    await user.update({ name, email })
+  res.status(204).json({ status: 'success' });
+});
 
-    res.status(201).json({
-        status: 'success',
-        user
-    })
-})
+const deleteUser = catchAsync(async (req, res, next) => {
+  const { user } = req;
 
-const disableUser = catchAsync(async (req, res, next) => {
-    const { id } = req.params
+  // await user.destroy();
+  await user.update({ status: 'inactive' });
 
-    const user = await User.findOne({ where: { id } })
-    await user.update({
-        status: 'disabled'
-    })
+  res.status(204).json({ status: 'success' });
+});
 
-    res.status(201).json({
-        status: 'success',
-        user
-    })
-})
+const getAllUsers = catchAsync(async (req, res, next) => {
+  const users = await User.findOne({
+    where: {
+      status: 'active',
+    },
+  });
 
-module.exports = { createUser, loginUser, getAllActiveUsers, updateUser, disableUser }
+  res.status(200).json({
+    status: 'success',
+    users,
+  });
+});
+
+module.exports = {
+  createUser,
+  login,
+  updateUser,
+  deleteUser,
+  getAllUsers,
+};

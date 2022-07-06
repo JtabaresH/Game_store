@@ -20,7 +20,8 @@ const createConsole = catchAsync(async (req, res, next) => {
 
 const getAllConsoles = catchAsync(async (req, res, next) => {
   const consoles = await Console.findAll({
-    include: [{ model: Game }],
+    attributes: ['id', 'name', 'company', 'status'],
+    include: [{ model: Game, attributes: ['id', 'title', 'genre', 'status'] }],
   });
 
   res.status(200).json({
@@ -35,19 +36,13 @@ const updateConsole = catchAsync(async (req, res, next) => {
 
   await console.update({ name });
 
-  res.status(201).json({ 
-    status: 'success',
-    console
-  });
+  res.status(201).json({ status: 'success', console });
 });
 
 const deleteConsole = catchAsync(async (req, res, next) => {
   const { console } = req;
   await console.update({ status: 'inactive' });
-  res.status(201).json({ 
-    status: 'success',
-    console
-  });
+  res.status(201).json({ status: 'success', console });
 });
 
 module.exports = {

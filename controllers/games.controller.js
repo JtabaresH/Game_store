@@ -2,87 +2,92 @@
 const { Game } = require('../models/game.model');
 const { Review } = require('../models/review.model');
 const { Console } = require('../models/console.model');
+const { GameInConsole } = require('../models/gameInConsole.model');
 
 // Utils
 const { catchAsync } = require('../utils/catchAsync.util');
 
 const createGame = catchAsync(async (req, res, next) => {
-    const { title, genre } = req.body;
-    const newGame = await Game.create({
-        title,
-        genre,
-    });
+  const { title, genre } = req.body;
+  const newGame = await Game.create({
+    title,
+    genre,
+  });
 
-    res.status(201).json({
-        status: 'success',
-        newGame,
-    });
+  res.status(201).json({
+    status: 'success',
+    newGame,
+  });
 });
 
 const getAllGames = catchAsync(async (req, res, next) => {
-    const games = await Game.findAll({
-        include: [{ model: Console }, { model: Review }],
-    });
+  const games = await Game.findAll({
+    attributes: ['id', 'title', 'genre', 'status'],
+    include: [
+      {
+        model: Console,
+        attributes: ['id', 'name', 'company', 'status'],
+      },
+      {
+        model: Review,
+        attributes: ['id', 'userId', 'gameId', 'comment', 'status'],
+      },
+    ],
+  });
 
-    res.status(200).json({
-        status: 'success',
-        games,
-    });
+  res.status(200).json({
+    status: 'success',
+    games,
+  });
 });
 
 const updateGame = catchAsync(async (req, res, next) => {
-    const { id } = req.params
-    const { title } = req.body
+  const { game } = req;
+  const { title } = req.body;
 
-    const game = await Game.findOne({ where: { id } })
-    
-    await game.update({ title })
+  await game.update({ title });
 
-    res.status(201).json({ 
-        status: 'success', 
-        game 
-    })
-})
+  res.status(201).json({ status: 'success', game });
+});
 
 const deleteGame = catchAsync(async (req, res, next) => {
-    const { game } = req;
-    await game.update({ status: 'inactive' });
-    res.status(201).json({ status: 'success', game });
+  const { game } = req;
+  await game.update({ status: 'inactive' });
+  res.status(201).json({ status: 'success', game });
 });
 
 const reviewGame = catchAsync(async (req, res, next) => {
-    const { sessionUser, game } = req;
+  const { sessionUser, game } = req;
+  const { comment } = req.body;
 
-    const { comment } = req.body;
+  const newReview = await Review.create({
+    userId: sessionUser.id,
+    gameId: game.id,
+    comment,
+  });
 
-    const newReview = await Review.create({
-        userId: sessionUser.id,
-        gameId: game.id,
-        comment,
-    });
-
-    res.status(201).json({
-        status: 'success',
-        newReview,
-    });
+  res.status(201).json({
+    status: 'success',
+    newReview,
+  });
 });
 
-const assignGameToConsole = catchAsync(async(req, res, next) => {
-    const { gameId, consoleId } = req.body
+const assignGameToConsole = catchAsync(async (req, res, next) => {
+  const { gameId, consoleId } = req.body;
 
-    const gameInConsole = await GameInConsole.create({ gameId, consoleId })
+  const gameInConsole = await GameInConsole.create({ gameId, consoleId });
 
-    res.status(201).json({
-        status: 'success',
-        gameInConsole
-    });
-})
+  res.status(201).json({
+    status: 'success',
+    gameInConsole,
+  });
+});
 
 module.exports = {
-    getAllGames,
-    createGame,
-    updateGame,
-    deleteGame,
-    reviewGame,
-    assignGameToConsole
+  getAllGames,
+  createGame,
+  updateGame,
+  deleteGame,
+  reviewGame,
+  assignGameToConsole,
 };
